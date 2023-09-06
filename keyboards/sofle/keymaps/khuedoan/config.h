@@ -11,6 +11,7 @@ for more options.
 // TODO optimize this
 #undef TAPPING_TERM
 #define TAPPING_TERM 200
+#define QUICK_TAP_TERM 0
 #define HOLD_ON_OTHER_KEY_PRESS
 
 #define MOUSEKEY_TIME_TO_MAX 20
