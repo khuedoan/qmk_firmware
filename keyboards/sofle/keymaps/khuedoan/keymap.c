@@ -24,7 +24,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,     KC_Q,       KC_W,       KC_E,       KC_R,       KC_T,                                        KC_Y,       KC_U,       KC_I,       KC_O,       KC_P,       KC_EQL,
         KC_XCAPE,   KC_A,       KC_S,       KC_D,       KC_F,       KC_G,                                        KC_H,       KC_J,       KC_K,       KC_L,       KC_SCLN,    KC_QUOT,
         KC_LSFT,    KC_Z,       KC_X,       KC_C,       KC_V,       KC_B,       XXXXXXX,             XXXXXXX,    KC_N,       KC_M,       KC_COMM,    KC_DOT,     KC_SLSH,    KC_SHIENT,
-        /*    */    /*    */    KC_LCTL,    MO(_NAV),   KC_LGUI,    KC_SPC,     KC_LALT,             KC_SYMBSPC, KC_NAVSPC,  MO(_FUNC),  KC_RGUI,    KC_RCTL     /*    */    /*    */
+        /*    */    /*    */    MO(_NAV),   KC_LALT,    KC_LGUI,    KC_SPC,     MO(_SYM),            KC_SYMBSPC, KC_NAVSPC,  MO(_FUNC),  KC_RGUI,    KC_RCTL     /*    */    /*    */
     ),
 
     [_SYM] = LAYOUT(
@@ -75,3 +75,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 }
+
+#ifdef OLED_ENABLE
+
+static void print_status_narrow(void) {
+    oled_write_ln_P(PSTR("MODE"), false);
+    oled_write_ln_P(PSTR(""), false);
+
+    switch (get_highest_layer(default_layer_state)) {
+        case _BASE:
+            oled_write_ln_P(PSTR("base"), false);
+            break;
+        case _GAME:
+            oled_write_ln_P(PSTR("game"), false);
+            break;
+        default:
+            oled_write_P(PSTR("undef"), false);
+    }
+
+    oled_write_P(PSTR("\n\n"), false);
+
+    oled_write_ln_P(PSTR("LAYER"), false);
+    switch (get_highest_layer(layer_state)) {
+        case _GAME:
+        case _BASE:
+            oled_write_P(PSTR("base"), false);
+            break;
+        case _SYM:
+            oled_write_P(PSTR("sym"), false);
+            break;
+        case _NAV:
+            oled_write_P(PSTR("nav"), false);
+            break;
+        case _FUNC:
+            oled_write_P(PSTR("func"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("undef"), false);
+    }
+}
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    return OLED_ROTATION_270;
+}
+
+bool oled_task_user(void) {
+    print_status_narrow();
+    return false;
+}
+
+#endif
